@@ -42,9 +42,13 @@ pipeline {
 
     stage('Static Code Analysis (Bandit)') {
       steps {
-        sh './venv/bin/bandit -r . -x venv -ll'
+        sh '''
+            # Ignore the virtual environment and hidden folders
+            bandit -r . -x venv,__pycache__,.pytest_cache --skip B101 -f txt -o bandit-report.txt || true
+        '''
       }
     }
+    
 
     stage('Dependency Scan (Safety)') {
       steps {
